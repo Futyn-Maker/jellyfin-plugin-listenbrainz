@@ -411,21 +411,26 @@ public sealed class DefaultPlaylistExportService : IPlaylistExportService, IDisp
         var now = DateTime.UtcNow;
         context.Entries.TryGetValue(desired.Key, out var entry);
 
-        if (desired.Skipped.Count > 0)
-        {
-            _logger.LogInformation(
-                "Playlist '{Title}': {Count} track(s) have no MusicBrainz recording ID and are not exported: {Tracks}",
-                desired.Title,
-                desired.Skipped.Count,
-                string.Join("; ", desired.Skipped.Take(20)));
-        }
-
         if (entry is not null &&
             entry.ContentHash == hash &&
             !context.IsScheduledRun &&
             now - entry.LastVerifiedUtc < VerifyInterval)
         {
             return;
+        }
+
+        if (desired.Skipped.Count > 0)
+        {
+            // Info only when something changed, to keep periodic runs quiet.
+            var level = entry is null || entry.ContentHash != hash || entry.SkippedCount != desired.Skipped.Count
+                ? LogLevel.Information
+                : LogLevel.Debug;
+            _logger.Log(
+                level,
+                "Playlist '{Title}': {Count} track(s) have no MusicBrainz recording ID and are not exported: {Tracks}",
+                desired.Title,
+                desired.Skipped.Count,
+                string.Join("; ", desired.Skipped.Take(20)));
         }
 
         Playlist? remote = null;
