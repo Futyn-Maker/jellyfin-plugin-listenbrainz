@@ -59,6 +59,7 @@ public class PluginServiceRegistratorTests
         services.AddSingleton(Mock.Of<IUserManager>());
         services.AddSingleton(Mock.Of<IUserDataManager>());
         services.AddSingleton(Mock.Of<ISessionManager>());
+        services.AddSingleton(Mock.Of<MediaBrowser.Controller.Playlists.IPlaylistManager>());
 
         new PluginServiceRegistrator().RegisterServices(services, Mock.Of<IServerApplicationHost>());
 

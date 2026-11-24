@@ -88,6 +88,12 @@ public class PluginServiceRegistrator : IPluginServiceRegistrator
             return new DefaultPersistentJsonService<PlaylistSyncState>(statePath);
         });
 
+        serviceCollection.AddSingleton<IPersistentJsonService<PlaylistExportState>>(_ =>
+        {
+            var statePath = Path.Join(Plugin.GetDataPath(), "playlist-export-state.json");
+            return new DefaultPersistentJsonService<PlaylistExportState>(statePath);
+        });
+
         serviceCollection.AddSingleton<IPersistentJsonService<ListenCacheData>>(_ =>
         {
             var cachePath = Path.Join(Plugin.GetDataPath(), "cache.json");
@@ -114,6 +120,9 @@ public class PluginServiceRegistrator : IPluginServiceRegistrator
             var storage = sp.GetRequiredService<IPersistentJsonService<PlaylistSyncState>>();
             return new DefaultPlaylistSyncStateService(logger, storage);
         });
+
+        serviceCollection.AddSingleton<IPlaylistExportService>(sp =>
+            ActivatorUtilities.CreateInstance<DefaultPlaylistExportService>(sp, GetLogger(sp, "PlaylistExport")));
 
         serviceCollection.AddSingleton<IListensCachingService>(sp =>
         {

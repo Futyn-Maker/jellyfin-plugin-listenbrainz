@@ -1,8 +1,11 @@
 using Jellyfin.Plugin.ListenBrainz.Handlers;
+using Jellyfin.Plugin.ListenBrainz.Interfaces;
+using MediaBrowser.Controller.Entities.Audio;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Session;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using JellyfinPlaylist = MediaBrowser.Controller.Playlists.Playlist;
 
 namespace Jellyfin.Plugin.ListenBrainz;
 
@@ -18,6 +21,8 @@ public sealed class PluginEventHandlerService : IHostedService
     private readonly PlaybackProgressHandler _playbackProgressHandler;
     private readonly PlaybackStopHandler _playbackStopHandler;
     private readonly UserDataSaveHandler _userDataSaveHandler;
+    private readonly ILibraryManager _libraryManager;
+    private readonly IPlaylistExportService _playlistExportService;
     private bool _isRegistered;
 
     /// <summary>
@@ -30,6 +35,8 @@ public sealed class PluginEventHandlerService : IHostedService
     /// <param name="playbackProgressHandler">Playback progress handler.</param>
     /// <param name="playbackStopHandler">Playback stop handler.</param>
     /// <param name="userDataSaveHandler">User data save handler.</param>
+    /// <param name="libraryManager">Library manager.</param>
+    /// <param name="playlistExportService">Playlist export service.</param>
     public PluginEventHandlerService(
         ILogger<PluginEventHandlerService> logger,
         ISessionManager sessionManager,
@@ -37,7 +44,9 @@ public sealed class PluginEventHandlerService : IHostedService
         PlaybackStartHandler playbackStartHandler,
         PlaybackProgressHandler playbackProgressHandler,
         PlaybackStopHandler playbackStopHandler,
-        UserDataSaveHandler userDataSaveHandler)
+        UserDataSaveHandler userDataSaveHandler,
+        ILibraryManager libraryManager,
+        IPlaylistExportService playlistExportService)
     {
         _logger = logger;
         _sessionManager = sessionManager;
@@ -46,6 +55,8 @@ public sealed class PluginEventHandlerService : IHostedService
         _playbackProgressHandler = playbackProgressHandler;
         _playbackStopHandler = playbackStopHandler;
         _userDataSaveHandler = userDataSaveHandler;
+        _libraryManager = libraryManager;
+        _playlistExportService = playlistExportService;
     }
 
     /// <inheritdoc />
@@ -61,6 +72,9 @@ public sealed class PluginEventHandlerService : IHostedService
         _sessionManager.PlaybackProgress += _playbackProgressHandler.HandleEvent;
         _sessionManager.PlaybackStopped += _playbackStopHandler.HandleEvent;
         _userDataManager.UserDataSaved += _userDataSaveHandler.HandleEvent;
+        _libraryManager.ItemAdded += OnLibraryItemChanged;
+        _libraryManager.ItemUpdated += OnLibraryItemChanged;
+        _libraryManager.ItemRemoved += OnLibraryItemChanged;
 
         _isRegistered = true;
         _logger.LogDebug("Plugin event handlers have been registered");
@@ -80,9 +94,22 @@ public sealed class PluginEventHandlerService : IHostedService
         _sessionManager.PlaybackProgress -= _playbackProgressHandler.HandleEvent;
         _sessionManager.PlaybackStopped -= _playbackStopHandler.HandleEvent;
         _userDataManager.UserDataSaved -= _userDataSaveHandler.HandleEvent;
+        _libraryManager.ItemAdded -= OnLibraryItemChanged;
+        _libraryManager.ItemUpdated -= OnLibraryItemChanged;
+        _libraryManager.ItemRemoved -= OnLibraryItemChanged;
 
         _isRegistered = false;
         _logger.LogDebug("Plugin event handlers have been unregistered");
         return Task.CompletedTask;
+    }
+
+    private void OnLibraryItemChanged(object? sender, ItemChangeEventArgs e)
+    {
+        // Playlist edits (add/remove/move items) raise ItemUpdated for the playlist;
+        // library changes raise events for the audio items.
+        if (e.Item is JellyfinPlaylist or Audio)
+        {
+            _playlistExportService.RequestExport($"{e.Item.GetType().Name} '{e.Item.Name}' changed ({e.UpdateReason})");
+        }
     }
 }
