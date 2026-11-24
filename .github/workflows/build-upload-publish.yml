@@ -6,6 +6,11 @@ on:
     types:
       - released
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Fork releases: tag of an existing release to build, attach the zip to and add to manifest.json'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -22,8 +27,30 @@ jobs:
     uses: ./.github/workflows/build.yml
 
   upload:
+    if: ${{ github.event_name == 'release' }}
     needs: build
     uses: ./.github/workflows/upload.yml
+
+  # Fork releases can also be published by running this workflow manually with the release tag.
+  upload-fork-release:
+    if: ${{ !contains(github.repository, 'lyarenei/') && github.event_name == 'workflow_dispatch' && inputs.tag != '' }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: build-artifact
+
+      - name: Upload GH Release Assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |-
+          for file in ./*.zip; do
+            md5sum ${file#./} >> ${file%.*}.md5
+            sha256sum ${file#./} >> ${file%.*}.sha256
+          done
+          gh release upload "${{ inputs.tag }}" ./* --clobber --repo "${{ github.repository }}"
 
   upload-repo:
     if: ${{ contains(github.repository, 'lyarenei/') }}
@@ -50,9 +77,11 @@ jobs:
   # Forks publish through GitHub: the zip is attached to the release (upload job)
   # and manifest.json on the main branch is the plugin repository manifest.
   update-fork-manifest:
-    if: ${{ !contains(github.repository, 'lyarenei/') && github.event_name == 'release' }}
-    needs: upload
+    if: ${{ !cancelled() && !contains(github.repository, 'lyarenei/') && (needs.upload.result == 'success' || needs.upload-fork-release.result == 'success') }}
+    needs: [upload, upload-fork-release]
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -69,7 +98,7 @@ jobs:
         run: |-
           pip install --quiet pyyaml
           zip=$(ls artifact/*.zip | head -n 1)
-          url="https://github.com/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/$(basename "$zip")"
+          url="https://github.com/${{ github.repository }}/releases/download/${TAG}/$(basename "$zip")"
           image="https://raw.githubusercontent.com/${{ github.repository }}/main/res/listenbrainz/ListenBrainz_logo.svg"
           python scripts/update_manifest.py manifest.json build.yaml "$zip" "$url" "$image"
 
@@ -78,5 +107,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add manifest.json
-          git commit -m "Update plugin manifest for ${{ github.event.release.tag_name }}"
+          git commit -m "Update plugin manifest for ${TAG}"
           git push origin HEAD:main
