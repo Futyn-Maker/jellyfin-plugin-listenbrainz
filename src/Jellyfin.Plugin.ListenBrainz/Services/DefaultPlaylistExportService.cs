@@ -121,11 +121,18 @@ public sealed class DefaultPlaylistExportService : IPlaylistExportService, IDisp
     /// <inheritdoc />
     public async Task ExportAllAsync(bool isScheduledRun, CancellationToken cancellationToken)
     {
+        var userConfigs = _config.UserConfigs.Where(IsExportConfigured).ToList();
+        if (userConfigs.Count == 0)
+        {
+            _logger.LogDebug("No user has playlist export enabled");
+            return;
+        }
+
         await _runLock.WaitAsync(cancellationToken);
         try
         {
             var state = await LoadStateAsync(cancellationToken);
-            foreach (var userConfig in _config.UserConfigs.Where(IsExportConfigured).ToList())
+            foreach (var userConfig in userConfigs)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 try
@@ -196,7 +203,7 @@ public sealed class DefaultPlaylistExportService : IPlaylistExportService, IDisp
         {
             return await _stateStorage.ReadAsync(cancellationToken: cancellationToken);
         }
-        catch (ServiceException e) when (e.InnerException is FileNotFoundException)
+        catch (ServiceException e) when (e.InnerException is FileNotFoundException or DirectoryNotFoundException)
         {
             return new PlaylistExportState();
         }
