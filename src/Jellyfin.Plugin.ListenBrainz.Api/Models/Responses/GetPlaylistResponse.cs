@@ -25,4 +25,14 @@ public class GetPlaylistResponse : IListenBrainzResponse
     /// Gets or sets playlist data.
     /// </summary>
     public Playlist Playlist { get; set; }
+
+    /// <summary>
+    /// Gets or sets error code reported in the body of a failed request (e.g. 404 for a deleted playlist).
+    /// </summary>
+    public int? Code { get; set; }
+
+    /// <summary>
+    /// Gets or sets error message reported in the body of a failed request.
+    /// </summary>
+    public string? Error { get; set; }
 }

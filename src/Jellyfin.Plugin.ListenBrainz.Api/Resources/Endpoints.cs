@@ -49,4 +49,39 @@ public static class Endpoints
     /// Endpoint for playlist details.
     /// </summary>
     public const string PlaylistDetails = "playlist/{0}";
+
+    /// <summary>
+    /// Endpoint for playlists created by a user.
+    /// </summary>
+    public const string UserPlaylists = UserEndpointBase + "/{0}/playlists";
+
+    /// <summary>
+    /// Endpoint for creating a playlist.
+    /// </summary>
+    public const string PlaylistCreate = "playlist/create";
+
+    /// <summary>
+    /// Endpoint for editing playlist metadata.
+    /// </summary>
+    public const string PlaylistEdit = "playlist/edit/{0}";
+
+    /// <summary>
+    /// Endpoint for deleting a playlist.
+    /// </summary>
+    public const string PlaylistDelete = "playlist/{0}/delete";
+
+    /// <summary>
+    /// Endpoint for appending items to a playlist.
+    /// </summary>
+    public const string PlaylistItemAdd = "playlist/{0}/item/add";
+
+    /// <summary>
+    /// Endpoint for inserting items into a playlist at a specific offset.
+    /// </summary>
+    public const string PlaylistItemAddAtOffset = "playlist/{0}/item/add/{1}";
+
+    /// <summary>
+    /// Endpoint for deleting items from a playlist.
+    /// </summary>
+    public const string PlaylistItemDelete = "playlist/{0}/item/delete";
 }

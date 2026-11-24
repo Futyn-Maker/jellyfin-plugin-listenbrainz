@@ -65,4 +65,40 @@ public class ListenBrainzApiClient : IListenBrainzApiClient
     {
         return await _apiClient.SendGetRequest<GetPlaylistRequest, GetPlaylistResponse>(request, cancellationToken);
     }
+
+    /// <inheritdoc />
+    public async Task<GetUserPlaylistsResponse> GetUserPlaylists(GetUserPlaylistsRequest request, CancellationToken cancellationToken)
+    {
+        return await _apiClient.SendGetRequest<GetUserPlaylistsRequest, GetUserPlaylistsResponse>(request, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<PlaylistWriteResponse> CreatePlaylist(CreatePlaylistRequest request, CancellationToken cancellationToken)
+    {
+        return await _apiClient.SendPostRequest<CreatePlaylistRequest, PlaylistWriteResponse>(request, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<PlaylistWriteResponse> EditPlaylist(EditPlaylistRequest request, CancellationToken cancellationToken)
+    {
+        return await _apiClient.SendPostRequest<EditPlaylistRequest, PlaylistWriteResponse>(request, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<PlaylistWriteResponse> DeletePlaylist(DeletePlaylistRequest request, CancellationToken cancellationToken)
+    {
+        return await _apiClient.SendPostRequest<DeletePlaylistRequest, PlaylistWriteResponse>(request, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<PlaylistWriteResponse> AddPlaylistItems(AddPlaylistItemsRequest request, CancellationToken cancellationToken)
+    {
+        return await _apiClient.SendPostRequest<AddPlaylistItemsRequest, PlaylistWriteResponse>(request, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<PlaylistWriteResponse> DeletePlaylistItems(DeletePlaylistItemsRequest request, CancellationToken cancellationToken)
+    {
+        return await _apiClient.SendPostRequest<DeletePlaylistItemsRequest, PlaylistWriteResponse>(request, cancellationToken);
+    }
 }

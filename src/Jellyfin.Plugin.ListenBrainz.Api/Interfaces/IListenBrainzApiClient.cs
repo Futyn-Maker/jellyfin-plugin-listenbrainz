@@ -63,4 +63,52 @@ public interface IListenBrainzApiClient
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Request response.</returns>
     public Task<GetPlaylistResponse> GetPlaylist(GetPlaylistRequest request, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Get playlists created by a user.
+    /// </summary>
+    /// <param name="request">User playlists request.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request response.</returns>
+    public Task<GetUserPlaylistsResponse> GetUserPlaylists(GetUserPlaylistsRequest request, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Create a playlist.
+    /// </summary>
+    /// <param name="request">Create playlist request.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request response with the new playlist MBID.</returns>
+    public Task<PlaylistWriteResponse> CreatePlaylist(CreatePlaylistRequest request, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Edit playlist metadata (title, annotation, public flag).
+    /// </summary>
+    /// <param name="request">Edit playlist request.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request response.</returns>
+    public Task<PlaylistWriteResponse> EditPlaylist(EditPlaylistRequest request, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Delete a playlist.
+    /// </summary>
+    /// <param name="request">Delete playlist request.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request response.</returns>
+    public Task<PlaylistWriteResponse> DeletePlaylist(DeletePlaylistRequest request, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Add (append or insert) items to a playlist.
+    /// </summary>
+    /// <param name="request">Add items request.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request response.</returns>
+    public Task<PlaylistWriteResponse> AddPlaylistItems(AddPlaylistItemsRequest request, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Delete a range of items from a playlist.
+    /// </summary>
+    /// <param name="request">Delete items request.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Request response.</returns>
+    public Task<PlaylistWriteResponse> DeletePlaylistItems(DeletePlaylistItemsRequest request, CancellationToken cancellationToken);
 }
