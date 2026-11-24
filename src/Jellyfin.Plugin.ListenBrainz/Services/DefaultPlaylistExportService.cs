@@ -372,7 +372,7 @@ public sealed class DefaultPlaylistExportService : IPlaylistExportService, IDisp
 
     private static int CompareForLibraryOrder(Audio a, Audio b)
     {
-        static string Artist(Audio x) => x.AlbumArtists.FirstOrDefault() ?? x.Artists.FirstOrDefault() ?? string.Empty;
+        static string Artist(Audio x) => x.Artists.FirstOrDefault() ?? x.AlbumArtists.FirstOrDefault() ?? string.Empty;
         var compareInfo = CultureInfo.InvariantCulture.CompareInfo;
         const CompareOptions Options = CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace;
 

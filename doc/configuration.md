@@ -112,9 +112,9 @@ skipped (and listed in the log). See [exporting playlists](how-it-works.md#expor
 ##### Export the whole music library as a playlist
 
 Keeps one ListenBrainz playlist with every track of the libraries selected in
-[Libraries included in the library playlist](#libraries-included-in-the-library-playlist), ordered by album
-artist, album, disc and track number. Each recording appears once. Since ListenBrainz has no collections, this is
-the way to share a link to a whole library.
+[Libraries included in the library playlist](#libraries-included-in-the-library-playlist), ordered by the
+first artist of each track, then album, disc and track number. Each recording appears once. Since ListenBrainz
+has no collections, this is the way to share a link to a whole library.
 
 ##### Library playlist title
 
