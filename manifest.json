@@ -1,0 +1,21 @@
+[
+  {
+    "guid": "59b20823-aafe-454c-a393-17427f518631",
+    "name": "ListenBrainz",
+    "description": "A plugin to send your music listening activity on Jellyfin to ListenBrainz. This is a fork of lyarenei/jellyfin-plugin-listenbrainz that can also export Jellyfin playlists and the whole music library to ListenBrainz playlists and keep them in sync.\n",
+    "overview": "Track your music habits with ListenBrainz.",
+    "owner": "Futyn-Maker",
+    "category": "General",
+    "imageUrl": "https://raw.githubusercontent.com/Futyn-Maker/jellyfin-plugin-listenbrainz/main/res/listenbrainz/ListenBrainz_logo.svg",
+    "versions": [
+      {
+        "version": "6.6.2.101",
+        "changelog": "Fork of 6.6.2.1 (lyarenei/jellyfin-plugin-listenbrainz) with playlist export:\n  - Export (mirror) Jellyfin playlists to ListenBrainz playlists\n  - Export the whole music library as one ListenBrainz playlist\n  - Changes are synced automatically: added, removed and reordered tracks\n",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://github.com/Futyn-Maker/jellyfin-plugin-listenbrainz/releases/download/6.6.2.101/listenbrainz_6.6.2.101.zip",
+        "checksum": "7f81c06964d6ecb62beb9397f7b29437",
+        "timestamp": "2026-11-24T21:50:32Z"
+      }
+    ]
+  }
+]
