@@ -7,11 +7,15 @@ on:
       - released
   workflow_dispatch:
 
+permissions:
+  contents: write
+  packages: read
+
 jobs:
   test:
     uses: jellyfin/jellyfin-meta-plugins/.github/workflows/test.yaml@master
     with:
-      dotnet-version: ${{ vars.DOTNET_9 }}
+      dotnet-version: ${{ vars.DOTNET_9 || '9.0.x' }}
 
   build:
     needs: test
@@ -42,3 +46,37 @@ jobs:
       host: ${{ secrets.DEPLOY_HOST }}
       user: ${{ secrets.DEPLOY_USER }}
       key: ${{ secrets.DEPLOY_KEY }}
+
+  # Forks publish through GitHub: the zip is attached to the release (upload job)
+  # and manifest.json on the main branch is the plugin repository manifest.
+  update-fork-manifest:
+    if: ${{ !contains(github.repository, 'lyarenei/') && github.event_name == 'release' }}
+    needs: upload
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          ref: main
+
+      - name: Download Artifact
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: build-artifact
+          path: artifact
+
+      - name: Update manifest.json
+        run: |-
+          pip install --quiet pyyaml
+          zip=$(ls artifact/*.zip | head -n 1)
+          url="https://github.com/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/$(basename "$zip")"
+          image="https://raw.githubusercontent.com/${{ github.repository }}/main/res/listenbrainz/ListenBrainz_logo.svg"
+          python scripts/update_manifest.py manifest.json build.yaml "$zip" "$url" "$image"
+
+      - name: Commit manifest.json
+        run: |-
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifest.json
+          git commit -m "Update plugin manifest for ${{ github.event.release.tag_name }}"
+          git push origin HEAD:main

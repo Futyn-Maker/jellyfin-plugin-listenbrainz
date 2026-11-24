@@ -20,6 +20,15 @@
 
 ---
 
+> **About this fork:** this is a fork of [lyarenei/jellyfin-plugin-listenbrainz](https://github.com/lyarenei/jellyfin-plugin-listenbrainz)
+> that adds exporting Jellyfin playlists and the whole music library to ListenBrainz playlists
+> (see [exporting playlists](doc/how-it-works.md#exporting-playlists-to-listenbrainz)).
+> To install it, add this repository in Jellyfin (*Dashboard > Plugins > Repositories*) instead of the upstream one:
+> `https://raw.githubusercontent.com/Futyn-Maker/jellyfin-plugin-listenbrainz/main/manifest.json`
+>
+> Releases are published by creating a GitHub release whose tag is the version in [build.yaml](build.yaml);
+> the workflow attaches the plugin zip to the release and updates `manifest.json`.
+
 Please note that this plugin is not affiliated with ListenBrainz or Jellyfin projects.
 It is independently maintained and all issues with this plugin should be reported here instead of the respective project's communication channels.
 

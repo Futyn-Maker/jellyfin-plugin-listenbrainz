@@ -1,14 +1,16 @@
 ---
 name: "ListenBrainz"
 guid: "59B20823-AAFE-454C-A393-17427F518631"
-version: "6.6.2.1"
+version: "6.6.2.101"
 targetAbi: "10.11.0.0"
 framework: "net9.0"
 overview: "Track your music habits with ListenBrainz."
 description: >
   A plugin to send your music listening activity on Jellyfin to ListenBrainz.
+  This is a fork of lyarenei/jellyfin-plugin-listenbrainz that can also export Jellyfin playlists
+  and the whole music library to ListenBrainz playlists and keep them in sync.
 category: "General"
-owner: "lyarenei"
+owner: "Futyn-Maker"
 artifacts:
   - "Jellyfin.Plugin.ListenBrainz.dll"
   - "Jellyfin.Plugin.ListenBrainz.Api.dll"
@@ -16,8 +18,7 @@ artifacts:
   - "Jellyfin.Plugin.ListenBrainz.Http.dll"
   - "Jellyfin.Plugin.ListenBrainz.MusicBrainzApi.dll"
 changelog: >
-  This version contains the following changes:
-    - Migration system for plugin configuration file
-    - Re-matching playlists after a set time
-    - Improvements to playlist sync mechanism
-    - Other under-the-hood fixes
+  Fork of 6.6.2.1 (lyarenei/jellyfin-plugin-listenbrainz) with playlist export:
+    - Export (mirror) Jellyfin playlists to ListenBrainz playlists
+    - Export the whole music library as one ListenBrainz playlist
+    - Changes are synced automatically: added, removed and reordered tracks
