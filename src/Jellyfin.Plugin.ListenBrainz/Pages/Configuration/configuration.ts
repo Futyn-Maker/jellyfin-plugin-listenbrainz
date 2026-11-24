@@ -8,7 +8,7 @@ import {
 } from "./formHelpers";
 import registerEventHooks from "./eventHooks";
 import { initTabs } from "./tabs";
-import { getUniqueLibraryName, getUserConfig } from "./utils";
+import { getLibraryExportCheckboxName, getUniqueLibraryName, getUserConfig } from "./utils";
 import { MediaLibrary } from "./types";
 
 /**
@@ -74,4 +74,26 @@ function buildLibrariesList(view: HTMLElement, libraries: MediaLibrary[]) {
         label.appendChild(span);
         container.appendChild(label);
     });
+
+    const exportContainer = view.querySelector("#LibraryExportList") as HTMLDivElement;
+    libraries
+        .filter((library) => library.IsMusicLibrary)
+        .forEach((library) => {
+            const label = document.createElement("label");
+            label.classList.add("inputLabel", "inputLabelUnfocused");
+            label.htmlFor = getLibraryExportCheckboxName(library.Id);
+
+            const checkbox = document.createElement("input");
+            checkbox.setAttribute("is", "emby-checkbox");
+            checkbox.type = "checkbox";
+            checkbox.id = getLibraryExportCheckboxName(library.Id);
+            checkbox.name = getLibraryExportCheckboxName(library.Id);
+
+            const span = document.createElement("span");
+            span.textContent = library.Name;
+
+            label.appendChild(checkbox);
+            label.appendChild(span);
+            exportContainer.appendChild(label);
+        });
 }

@@ -1,6 +1,7 @@
 export interface LibraryConfig {
     Id: string;
     IsAllowed: boolean;
+    IsLibraryExportIncluded: boolean;
 }
 
 export interface MediaLibrary {
@@ -40,6 +41,12 @@ export interface PluginUserConfig {
     IsGeneratedPlaylistsSyncEnabled: boolean;
     JellyfinUserId: string;
     KeepPlaylistsAfterRotation: boolean;
+    IsPlaylistExportEnabled: boolean;
+    IsLibraryExportEnabled: boolean;
+    LibraryExportTitle: string;
+    LibraryExportDescription: string;
+    IsPlaylistExportPublic: boolean;
+    IsPlaylistExportCleanupEnabled: boolean;
     UserName: string;
 }
 

@@ -120,6 +120,48 @@
                             </label>
                             <div class="fieldDescription">Archive yearly "Top Missed Recordings" playlists. May produce very tiny playlists due to Jellyfin limitations.</div>
                         </div>
+                        <h4 class="sectionTitle">Export to ListenBrainz</h4>
+                        <div class="checkboxContainer">
+                            <label class="inputLabel inputLabelUnfocused" for="IsPlaylistExportEnabled">
+                                <input is="emby-checkbox" type="checkbox" id="IsPlaylistExportEnabled"
+                                       name="IsPlaylistExportEnabled"/>
+                                <span>Export Jellyfin playlists</span>
+                            </label>
+                            <div class="fieldDescription">Mirror the playlists owned by this user to ListenBrainz. Added, removed and reordered tracks are synced automatically. Tracks without a MusicBrainz recording ID are skipped.</div>
+                        </div>
+                        <div class="checkboxContainer">
+                            <label class="inputLabel inputLabelUnfocused" for="IsLibraryExportEnabled">
+                                <input is="emby-checkbox" type="checkbox" id="IsLibraryExportEnabled"
+                                       name="IsLibraryExportEnabled"/>
+                                <span>Export the whole music library as a playlist</span>
+                            </label>
+                            <div class="fieldDescription">Keep one ListenBrainz playlist with every track of the libraries selected on the Libraries tab, ordered by album artist, album and track number.</div>
+                        </div>
+                        <div class="inputContainer">
+                            <label class="inputLabel inputLabelUnfocused" for="LibraryExportTitle">Library playlist title</label>
+                            <input id="LibraryExportTitle" name="LibraryExportTitle" type="text" is="emby-input"/>
+                        </div>
+                        <div class="inputContainer">
+                            <label class="inputLabel inputLabelUnfocused" for="LibraryExportDescription">Library playlist description</label>
+                            <textarea is="emby-textarea" id="LibraryExportDescription" name="LibraryExportDescription" rows="3"></textarea>
+                            <div class="fieldDescription">Shown on the playlist page. Basic HTML is allowed.</div>
+                        </div>
+                        <div class="checkboxContainer">
+                            <label class="inputLabel inputLabelUnfocused" for="IsPlaylistExportPublic">
+                                <input is="emby-checkbox" type="checkbox" id="IsPlaylistExportPublic"
+                                       name="IsPlaylistExportPublic"/>
+                                <span>Make exported playlists public</span>
+                            </label>
+                            <div class="fieldDescription">Public playlists can be opened by anyone with the link, no ListenBrainz account needed.</div>
+                        </div>
+                        <div class="checkboxContainer">
+                            <label class="inputLabel inputLabelUnfocused" for="IsPlaylistExportCleanupEnabled">
+                                <input is="emby-checkbox" type="checkbox" id="IsPlaylistExportCleanupEnabled"
+                                       name="IsPlaylistExportCleanupEnabled"/>
+                                <span>Delete the ListenBrainz copy of a deleted Jellyfin playlist</span>
+                            </label>
+                        </div>
+                        <h4 class="sectionTitle">Other</h4>
                         <div class="checkboxContainer">
                             <label class="inputLabel inputLabelUnfocused" for="IsUserBackupEnabled">
                                 <input is="emby-checkbox" type="checkbox" id="IsUserBackupEnabled"
@@ -296,6 +338,11 @@
                             </div>
                         </div>
                         <div class="inputContainer" id="LibrariesList"></div>
+                        <div class="sectionTitleContainer flex align-items-center">
+                            <h4 class="sectionTitle">Libraries included in the library playlist</h4>
+                        </div>
+                        <div class="inputContainer" id="LibraryExportList"></div>
+                        <div class="fieldDescription">Used by "Export the whole music library as a playlist" on the User Config tab.</div>
                         <div>
                             <button is="emby-button" type="submit"
                                     class="raised button-submit block emby-button save-button">

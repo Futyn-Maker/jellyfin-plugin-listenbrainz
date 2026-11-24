@@ -1,5 +1,5 @@
 import { defaultMbidDelimiters, defaultPlaylistRematchIntervalDays } from "./constants";
-import { getUniqueLibraryName } from "./utils";
+import { getLibraryExportCheckboxName, getUniqueLibraryName } from "./utils";
 import { MediaLibrary, PluginConfiguration, PluginUserConfig } from "./types";
 
 // ── User Config ──
@@ -18,6 +18,12 @@ function getUserConfigFormElements(view: HTMLElement) {
         weeklyJamsSync: view.querySelector("#IsWeeklyJamsSyncEnabled") as HTMLInputElement,
         generatedPlaylistsSync: view.querySelector("#IsGeneratedPlaylistsSyncEnabled") as HTMLInputElement,
         playlistsRetention: view.querySelector("#KeepPlaylistsAfterRotation") as HTMLInputElement,
+        playlistExport: view.querySelector("#IsPlaylistExportEnabled") as HTMLInputElement,
+        libraryExport: view.querySelector("#IsLibraryExportEnabled") as HTMLInputElement,
+        libraryExportTitle: view.querySelector("#LibraryExportTitle") as HTMLInputElement,
+        libraryExportDescription: view.querySelector("#LibraryExportDescription") as HTMLTextAreaElement,
+        playlistExportPublic: view.querySelector("#IsPlaylistExportPublic") as HTMLInputElement,
+        playlistExportCleanup: view.querySelector("#IsPlaylistExportCleanupEnabled") as HTMLInputElement,
         userDropdown: view.querySelector("#JellyfinUser") as HTMLSelectElement,
     };
 }
@@ -36,6 +42,12 @@ export function fillUserConfigForm(view: HTMLElement, userConfig: PluginUserConf
     elements.weeklyJamsSync.checked = userConfig.IsWeeklyJamsSyncEnabled;
     elements.generatedPlaylistsSync.checked = userConfig.IsGeneratedPlaylistsSyncEnabled;
     elements.playlistsRetention.checked = userConfig.KeepPlaylistsAfterRotation;
+    elements.playlistExport.checked = userConfig.IsPlaylistExportEnabled;
+    elements.libraryExport.checked = userConfig.IsLibraryExportEnabled;
+    elements.libraryExportTitle.value = userConfig.LibraryExportTitle;
+    elements.libraryExportDescription.value = userConfig.LibraryExportDescription;
+    elements.playlistExportPublic.checked = userConfig.IsPlaylistExportPublic;
+    elements.playlistExportCleanup.checked = userConfig.IsPlaylistExportCleanupEnabled;
 }
 
 export function getUserConfigFormData(view: HTMLElement): PluginUserConfig {
@@ -54,6 +66,12 @@ export function getUserConfigFormData(view: HTMLElement): PluginUserConfig {
         IsGeneratedPlaylistsSyncEnabled: elements.generatedPlaylistsSync.checked,
         JellyfinUserId: elements.userDropdown.value,
         KeepPlaylistsAfterRotation: elements.playlistsRetention.checked,
+        IsPlaylistExportEnabled: elements.playlistExport.checked,
+        IsLibraryExportEnabled: elements.libraryExport.checked,
+        LibraryExportTitle: elements.libraryExportTitle.value.trim(),
+        LibraryExportDescription: elements.libraryExportDescription.value.trim(),
+        IsPlaylistExportPublic: elements.playlistExportPublic.checked,
+        IsPlaylistExportCleanupEnabled: elements.playlistExportCleanup.checked,
         UserName: "",
     };
 }
@@ -101,9 +119,7 @@ export function getGeneralConfigFormData(
         IsAlternativeModeEnabled: elements.altModeEnabled.checked,
         IsImmediateFavoriteSyncEnabled: elements.immediateFavorites.checked,
         ListenBrainzApiUrl: elements.listenBrainzUrl.value,
-        PlaylistRematchIntervalDays: isNaN(rematchInterval)
-            ? defaultPlaylistRematchIntervalDays
-            : rematchInterval,
+        PlaylistRematchIntervalDays: isNaN(rematchInterval) ? defaultPlaylistRematchIntervalDays : rematchInterval,
     };
 }
 
@@ -159,6 +175,7 @@ export function fillLibrariesConfigForm(
     pluginConfig: PluginConfiguration,
     jellyfinLibraries: MediaLibrary[],
 ): void {
+    fillLibraryExportForm(view, pluginConfig, jellyfinLibraries);
     if (pluginConfig.LibraryConfigs.length > 0) {
         pluginConfig.LibraryConfigs.map((lc) => {
             const checkboxId = getUniqueLibraryName(lc.Id);
@@ -180,12 +197,43 @@ export function fillLibrariesConfigForm(
     });
 }
 
+// Mirrors the server-side selection: explicitly included libraries, otherwise the libraries
+// allowed for listen submission, otherwise (nothing saved yet) all music libraries.
+function fillLibraryExportForm(
+    view: HTMLElement,
+    pluginConfig: PluginConfiguration,
+    jellyfinLibraries: MediaLibrary[],
+): void {
+    const configs = pluginConfig.LibraryConfigs;
+    const anyIncluded = configs.some((lc) => lc.IsLibraryExportIncluded);
+    jellyfinLibraries.forEach((library) => {
+        const checkbox = view.querySelector(`#${getLibraryExportCheckboxName(library.Id)}`) as HTMLInputElement;
+        if (!checkbox) {
+            return;
+        }
+
+        const lc = configs.find((c) => c.Id === library.Id);
+        if (configs.length === 0) {
+            checkbox.checked = library.IsMusicLibrary;
+        } else if (anyIncluded) {
+            checkbox.checked = lc?.IsLibraryExportIncluded ?? false;
+        } else {
+            checkbox.checked = lc?.IsAllowed ?? false;
+        }
+    });
+}
+
 export function getLibrariesConfigFormData(view: HTMLElement): Pick<PluginConfiguration, "LibraryConfigs"> {
     const checkboxes = view.querySelectorAll<HTMLInputElement>("[name^=library_]");
     return {
-        LibraryConfigs: [...checkboxes].map((box) => ({
-            Id: box.id.replace(/^library_/, "").replace(/_IsAllowed$/, ""),
-            IsAllowed: box.checked,
-        })),
+        LibraryConfigs: [...checkboxes].map((box) => {
+            const id = box.id.replace(/^library_/, "").replace(/_IsAllowed$/, "");
+            const exportBox = view.querySelector(`#${getLibraryExportCheckboxName(id)}`) as HTMLInputElement | null;
+            return {
+                Id: id,
+                IsAllowed: box.checked,
+                IsLibraryExportIncluded: exportBox?.checked ?? false,
+            };
+        }),
     };
 }

@@ -14,4 +14,9 @@ public class LibraryConfig
     /// Gets or sets a value indicating whether this library should not be ignored by plugin.
     /// </summary>
     public bool IsAllowed { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether tracks of this library are part of the whole-library ListenBrainz playlist.
+    /// </summary>
+    public bool IsLibraryExportIncluded { get; set; }
 }

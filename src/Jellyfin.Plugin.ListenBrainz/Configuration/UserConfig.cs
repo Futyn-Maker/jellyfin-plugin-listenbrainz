@@ -10,8 +10,15 @@ namespace Jellyfin.Plugin.ListenBrainz.Configuration;
 /// </summary>
 public class UserConfig
 {
+    /// <summary>
+    /// Default title of the whole-library ListenBrainz playlist.
+    /// </summary>
+    public const string DefaultLibraryExportTitle = "Music library";
+
     private string _apiToken = string.Empty;
     private string _userName = string.Empty;
+    private string _libraryExportTitle = DefaultLibraryExportTitle;
+    private string _libraryExportDescription = string.Empty;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UserConfig"/> class.
@@ -29,7 +36,49 @@ public class UserConfig
         IsTopDiscoveriesSyncEnabled = true;
         IsTopMissedRecordingsSyncEnabled = false;
         KeepPlaylistsAfterRotation = false;
+        IsPlaylistExportEnabled = false;
+        IsLibraryExportEnabled = false;
+        IsPlaylistExportPublic = true;
+        IsPlaylistExportCleanupEnabled = true;
     }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the user's Jellyfin playlists are exported (mirrored) to ListenBrainz.
+    /// </summary>
+    public bool IsPlaylistExportEnabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the whole music library is exported as one ListenBrainz playlist.
+    /// </summary>
+    public bool IsLibraryExportEnabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets title of the whole-library ListenBrainz playlist.
+    /// </summary>
+    public string LibraryExportTitle
+    {
+        get => _libraryExportTitle;
+        set => _libraryExportTitle = string.IsNullOrWhiteSpace(value) ? DefaultLibraryExportTitle : value.SanitizeForXml();
+    }
+
+    /// <summary>
+    /// Gets or sets description (annotation) of the whole-library ListenBrainz playlist.
+    /// </summary>
+    public string LibraryExportDescription
+    {
+        get => _libraryExportDescription;
+        set => _libraryExportDescription = (value ?? string.Empty).SanitizeForXml();
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether exported ListenBrainz playlists are public.
+    /// </summary>
+    public bool IsPlaylistExportPublic { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the ListenBrainz copy is deleted when its Jellyfin playlist is deleted.
+    /// </summary>
+    public bool IsPlaylistExportCleanupEnabled { get; set; }
 
     /// <summary>
     /// Gets or sets Jellyfin user id.

@@ -19,3 +19,7 @@ export function getUserConfig(config: PluginConfiguration, userId: string): Plug
 export function getUniqueLibraryName(libraryId: string): string {
     return `library_${libraryId}_IsAllowed`;
 }
+
+export function getLibraryExportCheckboxName(libraryId: string): string {
+    return `libexport_${libraryId}_IsLibraryExportIncluded`;
+}

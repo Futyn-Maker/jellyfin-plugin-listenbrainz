@@ -18,6 +18,12 @@ export const userDefaults: PluginUserConfig = {
     IsGeneratedPlaylistsSyncEnabled: false,
     JellyfinUserId: "",
     KeepPlaylistsAfterRotation: false,
+    IsPlaylistExportEnabled: false,
+    IsLibraryExportEnabled: false,
+    LibraryExportTitle: "Music library",
+    LibraryExportDescription: "",
+    IsPlaylistExportPublic: true,
+    IsPlaylistExportCleanupEnabled: true,
     UserName: "",
 };
 
