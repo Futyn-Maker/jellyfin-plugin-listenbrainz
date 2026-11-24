@@ -152,3 +152,40 @@ The plugin adds the following tasks to the server administration, all under the 
 | Sync generated playlists from ListenBrainz    | every Monday         | Copies the generated ListenBrainz playlists into Jellyfin. |
 | Sync loved tracks                             | manual               | Marks loved ListenBrainz recordings as Jellyfin favorites. |
 | Sync playlists from ListenBrainz (deprecated) | manual               | Does nothing; removed in a later version.                  |
+
+## Exporting playlists to ListenBrainz
+
+For users with [playlist export](configuration.md#export-jellyfin-playlists) or
+[library export](configuration.md#export-the-whole-music-library-as-a-playlist) enabled, the plugin mirrors
+Jellyfin playlists to ListenBrainz playlists. Jellyfin is the source of truth: changes made to the exported
+playlists on ListenBrainz are overwritten.
+
+Tracks are identified by their MusicBrainz recording ID (the `MUSICBRAINZ_TRACKID` tag, or the MP3 UFID frame, which
+Jellyfin stores as the `MusicBrainzRecording` provider ID). Tracks without one cannot be added to a ListenBrainz
+playlist and are skipped. After retagging files, run a library scan with *Replace all metadata* so that Jellyfin
+picks up the new IDs.
+
+### When the export runs
+
+- Shortly after a change. Adding, removing or reordering playlist items and library changes (new, updated or
+  removed tracks) trigger an export 90 seconds after the last change, at most 10 minutes after the first one.
+  A library scan therefore causes a single export when it finishes.
+- On server start and every 6 hours, by the `Export playlists to ListenBrainz` task. This run also verifies every
+  exported playlist against ListenBrainz and recreates playlists that were deleted there. You can run it manually.
+
+### How a playlist is updated
+
+Which ListenBrainz playlist belongs to which Jellyfin playlist is recorded in
+`<jellyfin config>/plugins/configurations/ListenBrainz/playlist-export-state.json`, so exported playlists keep their
+ListenBrainz link. If this file is lost, playlists with the same title are reused instead of duplicated.
+
+For each playlist the plugin compares the ordered list of recording IDs with the ListenBrainz copy and applies
+the smallest set of deletions and insertions it can find (falling back to rewriting the playlist when that needs
+fewer requests), then verifies the result. Unchanged playlists cause no requests, except for the periodic
+verification.
+
+Two safety rules protect against transient states, such as a library that is temporarily unavailable:
+
+- A run triggered by library events never removes more than half of a playlist with 20 or more tracks; such
+  a change waits for the next scheduled (or manual) run.
+- A deleted Jellyfin playlist is deleted on ListenBrainz only after it has been missing for 15 minutes.

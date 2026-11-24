@@ -103,6 +103,37 @@ repeats the check on every attempt, so once you add the missing metadata to the 
 
 If backups are enabled, the listen is saved even if this validation fails.
 
+##### Export Jellyfin playlists
+
+Mirrors every playlist owned by the selected user to a ListenBrainz playlist with the same name. Added, removed and
+reordered tracks are synced automatically, usually within two minutes. Tracks without a MusicBrainz recording ID are
+skipped (and listed in the log). See [exporting playlists](how-it-works.md#exporting-playlists-to-listenbrainz).
+
+##### Export the whole music library as a playlist
+
+Keeps one ListenBrainz playlist with every track of the libraries selected in
+[Libraries included in the library playlist](#libraries-included-in-the-library-playlist), ordered by album
+artist, album, disc and track number. Each recording appears once. Since ListenBrainz has no collections, this is
+the way to share a link to a whole library.
+
+##### Library playlist title
+
+Title of the library playlist. Defaults to `Music library`.
+
+##### Library playlist description
+
+Description (annotation) of the library playlist, shown on its page. Basic HTML is allowed.
+
+##### Make exported playlists public
+
+Public playlists can be opened by anyone with the link, including visitors without a ListenBrainz account.
+Private playlists are visible only to the user. Enabled by default.
+
+##### Delete the ListenBrainz copy of a deleted Jellyfin playlist
+
+When a Jellyfin playlist is deleted, its ListenBrainz copy is deleted too (after a short grace period). If disabled,
+the ListenBrainz playlist is kept and no longer updated. Enabled by default.
+
 ## General
 
 ##### ListenBrainz API URL
@@ -223,6 +254,12 @@ Each ListenBrainz user gets a directory and each day gets a file:
 `<backup path>/<listenbrainz username>/yyyy-MM-dd.json`. The format is identical the listen export of ListenBrainz.
 
 ## Libraries
+
+##### Libraries included in the library playlist
+
+The music libraries whose tracks make up the library playlist of
+[Export the whole music library as a playlist](#export-the-whole-music-library-as-a-playlist). If none is selected,
+the libraries allowed for listen submission are used.
 
 ##### Allowed libraries for listen submission
 
