@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/Futyn-Maker/jellyfin-plugin-listenbrainz/main/res/listenbrainz/ListenBrainz_logo.svg",
     "versions": [
       {
+        "version": "6.6.2.104",
+        "changelog": "Fork of 6.6.2.1 (lyarenei/jellyfin-plugin-listenbrainz) with playlist export:\n  - Export (mirror) Jellyfin playlists to ListenBrainz playlists\n  - Export the whole music library as one ListenBrainz playlist\n  - Changes are synced automatically: added, removed and reordered tracks\n  - 6.6.2.102: library playlist ordered by track artist; quieter startup\n  - 6.6.2.103: tracks without recording IDs are logged only when a playlist changes\n  - 6.6.2.104: configurable track order (e.g. library by date added, newest first); reorders and settings apply right away\n",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://github.com/Futyn-Maker/jellyfin-plugin-listenbrainz/releases/download/6.6.2.104/listenbrainz_6.6.2.104.zip",
+        "checksum": "de631b1da1de379f150e2e29c57931f5",
+        "timestamp": "2026-11-25T10:16:40Z"
+      },
+      {
         "version": "6.6.2.103",
         "changelog": "Fork of 6.6.2.1 (lyarenei/jellyfin-plugin-listenbrainz) with playlist export:\n  - Export (mirror) Jellyfin playlists to ListenBrainz playlists\n  - Export the whole music library as one ListenBrainz playlist\n  - Changes are synced automatically: added, removed and reordered tracks\n  - 6.6.2.102: library playlist ordered by track artist; quieter startup\n  - 6.6.2.103: tracks without recording IDs are logged only when a playlist changes\n",
         "targetAbi": "10.11.0.0",
