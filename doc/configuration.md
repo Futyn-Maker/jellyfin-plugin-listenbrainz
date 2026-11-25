@@ -109,12 +109,17 @@ Mirrors every playlist owned by the selected user to a ListenBrainz playlist wit
 reordered tracks are synced automatically, usually within two minutes. Tracks without a MusicBrainz recording ID are
 skipped (and listed in the log). See [exporting playlists](how-it-works.md#exporting-playlists-to-listenbrainz).
 
+##### Order of exported playlists
+
+Track order of the exported Jellyfin playlists: as in the Jellyfin playlist (default), by the date the tracks were
+added to Jellyfin (newest or oldest first), by artist, album and track number, or by title.
+
 ##### Export the whole music library as a playlist
 
 Keeps one ListenBrainz playlist with every track of the libraries selected in
-[Libraries included in the library playlist](#libraries-included-in-the-library-playlist), ordered by the
-first artist of each track, then album, disc and track number. Each recording appears once. Since ListenBrainz
-has no collections, this is the way to share a link to a whole library.
+[Libraries included in the library playlist](#libraries-included-in-the-library-playlist), in the
+[library playlist order](#library-playlist-order). Each recording appears once. Since ListenBrainz has no
+collections, this is the way to share a link to a whole library.
 
 ##### Library playlist title
 
@@ -123,6 +128,19 @@ Title of the library playlist. Defaults to `Music library`.
 ##### Library playlist description
 
 Description (annotation) of the library playlist, shown on its page. Basic HTML is allowed.
+
+##### Library playlist order
+
+Track order of the library playlist:
+
+- Artist, album and track number (default): by the first artist of each track, then album, disc and track number.
+- Date added, newest first: the tracks most recently added to Jellyfin come first, which makes the playlist a
+  feed of new additions.
+- Date added, oldest first.
+- Title.
+
+Tracks added at the same moment are kept in artist, album and track number order. Changing the order rearranges the
+existing ListenBrainz playlist; its link stays the same.
 
 ##### Make exported playlists public
 

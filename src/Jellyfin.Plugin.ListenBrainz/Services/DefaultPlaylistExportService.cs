@@ -238,7 +238,7 @@ public sealed class DefaultPlaylistExportService : IPlaylistExportService, IDisp
 
         if (userConfig.IsPlaylistExportEnabled)
         {
-            desired.AddRange(BuildJellyfinPlaylists(user));
+            desired.AddRange(BuildJellyfinPlaylists(user, userConfig));
         }
 
         foreach (var playlist in desired)
@@ -304,13 +304,17 @@ public sealed class DefaultPlaylistExportService : IPlaylistExportService, IDisp
                 .OfType<Audio>());
         }
 
-        items.Sort(CompareForLibraryOrder);
-        var (mbids, skipped) = CollectRecordingMbids(items, distinct: true);
+        // The library has no order of its own.
+        var order = userConfig.LibraryExportOrder == ExportTrackOrder.SourceOrder
+            ? ExportTrackOrder.ArtistAlbumTrack
+            : userConfig.LibraryExportOrder;
+        var (mbids, skipped) = CollectRecordingMbids(ExportTrackSorter.Sort(items, order), distinct: true);
         _logger.LogDebug(
-            "Library playlist: {Count} tracks from {Libraries} libraries ({Skipped} without recording MBID)",
+            "Library playlist: {Count} tracks from {Libraries} libraries ({Skipped} without recording MBID), order {Order}",
             mbids.Count,
             included.Count,
-            skipped.Count);
+            skipped.Count,
+            order);
 
         return new DesiredPlaylist(
             LibraryKey,
@@ -320,7 +324,7 @@ public sealed class DefaultPlaylistExportService : IPlaylistExportService, IDisp
             skipped);
     }
 
-    private IEnumerable<DesiredPlaylist> BuildJellyfinPlaylists(User user)
+    private IEnumerable<DesiredPlaylist> BuildJellyfinPlaylists(User user, UserConfig userConfig)
     {
         var playlists = _playlistManager
             .GetPlaylists(user.Id)
@@ -330,7 +334,9 @@ public sealed class DefaultPlaylistExportService : IPlaylistExportService, IDisp
 
         foreach (var playlist in playlists)
         {
-            var audioItems = playlist.GetManageableItems().Select(t => t.Item2).OfType<Audio>().ToList();
+            var audioItems = ExportTrackSorter.Sort(
+                playlist.GetManageableItems().Select(t => t.Item2).OfType<Audio>(),
+                userConfig.PlaylistExportOrder);
             var (mbids, skipped) = CollectRecordingMbids(audioItems, distinct: false);
             var description = string.IsNullOrWhiteSpace(playlist.Overview)
                 ? string.Empty
@@ -368,40 +374,6 @@ public sealed class DefaultPlaylistExportService : IPlaylistExportService, IDisp
         }
 
         return (mbids, skipped);
-    }
-
-    private static int CompareForLibraryOrder(Audio a, Audio b)
-    {
-        static string Artist(Audio x) => x.Artists.FirstOrDefault() ?? x.AlbumArtists.FirstOrDefault() ?? string.Empty;
-        var compareInfo = CultureInfo.InvariantCulture.CompareInfo;
-        const CompareOptions Options = CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace;
-
-        int c = compareInfo.Compare(Artist(a), Artist(b), Options);
-        if (c != 0)
-        {
-            return c;
-        }
-
-        c = compareInfo.Compare(a.Album ?? string.Empty, b.Album ?? string.Empty, Options);
-        if (c != 0)
-        {
-            return c;
-        }
-
-        c = (a.ParentIndexNumber ?? 0).CompareTo(b.ParentIndexNumber ?? 0);
-        if (c != 0)
-        {
-            return c;
-        }
-
-        c = (a.IndexNumber ?? 0).CompareTo(b.IndexNumber ?? 0);
-        if (c != 0)
-        {
-            return c;
-        }
-
-        c = compareInfo.Compare(a.SortName ?? a.Name ?? string.Empty, b.SortName ?? b.Name ?? string.Empty, Options);
-        return c != 0 ? c : string.CompareOrdinal(a.Path, b.Path);
     }
 
     private async Task SyncPlaylistAsync(ExportContext context, DesiredPlaylist desired, CancellationToken cancellationToken)

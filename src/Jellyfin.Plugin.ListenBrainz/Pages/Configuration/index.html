@@ -129,13 +129,23 @@
                             </label>
                             <div class="fieldDescription">Mirror the playlists owned by this user to ListenBrainz. Added, removed and reordered tracks are synced automatically. Tracks without a MusicBrainz recording ID are skipped.</div>
                         </div>
+                        <div class="selectContainer">
+                            <label class="selectLabel" for="PlaylistExportOrder">Order of exported playlists</label>
+                            <select is="emby-select" id="PlaylistExportOrder" name="PlaylistExportOrder">
+                                <option value="SourceOrder">As in the Jellyfin playlist</option>
+                                <option value="DateAddedNewestFirst">Date added, newest first</option>
+                                <option value="DateAddedOldestFirst">Date added, oldest first</option>
+                                <option value="ArtistAlbumTrack">Artist, album and track number</option>
+                                <option value="Title">Title</option>
+                            </select>
+                        </div>
                         <div class="checkboxContainer">
                             <label class="inputLabel inputLabelUnfocused" for="IsLibraryExportEnabled">
                                 <input is="emby-checkbox" type="checkbox" id="IsLibraryExportEnabled"
                                        name="IsLibraryExportEnabled"/>
                                 <span>Export the whole music library as a playlist</span>
                             </label>
-                            <div class="fieldDescription">Keep one ListenBrainz playlist with every track of the libraries selected on the Libraries tab, ordered by artist, album and track number.</div>
+                            <div class="fieldDescription">Keep one ListenBrainz playlist with every track of the libraries selected on the Libraries tab.</div>
                         </div>
                         <div class="inputContainer">
                             <label class="inputLabel inputLabelUnfocused" for="LibraryExportTitle">Library playlist title</label>
@@ -145,6 +155,15 @@
                             <label class="inputLabel inputLabelUnfocused" for="LibraryExportDescription">Library playlist description</label>
                             <textarea is="emby-textarea" id="LibraryExportDescription" name="LibraryExportDescription" rows="3"></textarea>
                             <div class="fieldDescription">Shown on the playlist page. Basic HTML is allowed.</div>
+                        </div>
+                        <div class="selectContainer">
+                            <label class="selectLabel" for="LibraryExportOrder">Library playlist order</label>
+                            <select is="emby-select" id="LibraryExportOrder" name="LibraryExportOrder">
+                                <option value="ArtistAlbumTrack">Artist, album and track number</option>
+                                <option value="DateAddedNewestFirst">Date added, newest first</option>
+                                <option value="DateAddedOldestFirst">Date added, oldest first</option>
+                                <option value="Title">Title</option>
+                            </select>
                         </div>
                         <div class="checkboxContainer">
                             <label class="inputLabel inputLabelUnfocused" for="IsPlaylistExportPublic">

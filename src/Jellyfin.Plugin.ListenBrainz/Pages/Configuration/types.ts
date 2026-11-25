@@ -25,6 +25,14 @@ export interface PluginConfiguration {
     UserConfigs: PluginUserConfig[];
 }
 
+// Track order of an exported playlist. Must match the names of the ExportTrackOrder enum.
+export type ExportTrackOrder =
+    | "SourceOrder"
+    | "ArtistAlbumTrack"
+    | "DateAddedNewestFirst"
+    | "DateAddedOldestFirst"
+    | "Title";
+
 // Plugin user configuration.
 // The keys must match the fields of UserConfig class.
 export interface PluginUserConfig {
@@ -47,6 +55,8 @@ export interface PluginUserConfig {
     LibraryExportDescription: string;
     IsPlaylistExportPublic: boolean;
     IsPlaylistExportCleanupEnabled: boolean;
+    LibraryExportOrder: ExportTrackOrder;
+    PlaylistExportOrder: ExportTrackOrder;
     UserName: string;
 }
 

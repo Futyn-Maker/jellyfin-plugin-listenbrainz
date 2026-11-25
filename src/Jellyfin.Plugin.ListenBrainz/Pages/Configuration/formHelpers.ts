@@ -1,6 +1,6 @@
-import { defaultMbidDelimiters, defaultPlaylistRematchIntervalDays } from "./constants";
+import { defaultMbidDelimiters, defaultPlaylistRematchIntervalDays, userDefaults } from "./constants";
 import { getLibraryExportCheckboxName, getUniqueLibraryName } from "./utils";
-import { MediaLibrary, PluginConfiguration, PluginUserConfig } from "./types";
+import { ExportTrackOrder, MediaLibrary, PluginConfiguration, PluginUserConfig } from "./types";
 
 // ── User Config ──
 
@@ -24,6 +24,8 @@ function getUserConfigFormElements(view: HTMLElement) {
         libraryExportDescription: view.querySelector("#LibraryExportDescription") as HTMLTextAreaElement,
         playlistExportPublic: view.querySelector("#IsPlaylistExportPublic") as HTMLInputElement,
         playlistExportCleanup: view.querySelector("#IsPlaylistExportCleanupEnabled") as HTMLInputElement,
+        libraryExportOrder: view.querySelector("#LibraryExportOrder") as HTMLSelectElement,
+        playlistExportOrder: view.querySelector("#PlaylistExportOrder") as HTMLSelectElement,
         userDropdown: view.querySelector("#JellyfinUser") as HTMLSelectElement,
     };
 }
@@ -48,6 +50,16 @@ export function fillUserConfigForm(view: HTMLElement, userConfig: PluginUserConf
     elements.libraryExportDescription.value = userConfig.LibraryExportDescription;
     elements.playlistExportPublic.checked = userConfig.IsPlaylistExportPublic;
     elements.playlistExportCleanup.checked = userConfig.IsPlaylistExportCleanupEnabled;
+    selectOrder(elements.libraryExportOrder, userConfig.LibraryExportOrder, userDefaults.LibraryExportOrder);
+    selectOrder(elements.playlistExportOrder, userConfig.PlaylistExportOrder, userDefaults.PlaylistExportOrder);
+}
+
+// Selects the configured order, or the default if the select has no such option.
+function selectOrder(select: HTMLSelectElement, order: ExportTrackOrder, fallback: ExportTrackOrder): void {
+    select.value = order;
+    if (select.value !== order) {
+        select.value = fallback;
+    }
 }
 
 export function getUserConfigFormData(view: HTMLElement): PluginUserConfig {
@@ -72,6 +84,8 @@ export function getUserConfigFormData(view: HTMLElement): PluginUserConfig {
         LibraryExportDescription: elements.libraryExportDescription.value.trim(),
         IsPlaylistExportPublic: elements.playlistExportPublic.checked,
         IsPlaylistExportCleanupEnabled: elements.playlistExportCleanup.checked,
+        LibraryExportOrder: elements.libraryExportOrder.value as ExportTrackOrder,
+        PlaylistExportOrder: elements.playlistExportOrder.value as ExportTrackOrder,
         UserName: "",
     };
 }
