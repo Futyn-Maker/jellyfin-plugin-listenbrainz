@@ -509,14 +509,16 @@ public sealed class DefaultPlaylistExportService : IPlaylistExportService, IDisp
     {
         var script = PlaylistDiff.Compute(current, desired.Mbids);
         int rebuildCalls = (current.Count > 0 ? 1 : 0) + ((desired.Mbids.Count + Limits.MaxRecordingsPerPlaylistAdd - 1) / Limits.MaxRecordingsPerPlaylistAdd);
-        int removed = script?.DeletedCount ?? current.Count;
 
-        if (!context.IsScheduledRun && current.Count >= MassRemovalMinTracks && removed > current.Count * MassRemovalRatio)
+        // Protects against transient states (e.g. a library that is temporarily unavailable) making tracks vanish.
+        // Only tracks that would disappear count: a reordered playlist is applied right away.
+        int dropped = PlaylistDiff.CountDropped(current, desired.Mbids);
+        if (!context.IsScheduledRun && current.Count >= MassRemovalMinTracks && dropped > current.Count * MassRemovalRatio)
         {
             _logger.LogWarning(
                 "Playlist '{Title}': update would remove {Removed} of {Count} tracks; holding it back until the next scheduled export run",
                 desired.Title,
-                removed,
+                dropped,
                 current.Count);
             return false;
         }
