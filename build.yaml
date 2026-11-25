@@ -1,7 +1,7 @@
 ---
 name: "ListenBrainz"
 guid: "59B20823-AAFE-454C-A393-17427F518631"
-version: "6.6.2.102"
+version: "6.6.2.103"
 targetAbi: "10.11.0.0"
 framework: "net9.0"
 overview: "Track your music habits with ListenBrainz."
@@ -23,3 +23,4 @@ changelog: >
     - Export the whole music library as one ListenBrainz playlist
     - Changes are synced automatically: added, removed and reordered tracks
     - 6.6.2.102: library playlist ordered by track artist; quieter startup
+    - 6.6.2.103: tracks without recording IDs are logged only when a playlist changes
