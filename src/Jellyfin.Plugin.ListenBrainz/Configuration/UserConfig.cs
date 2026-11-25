@@ -40,6 +40,8 @@ public class UserConfig
         IsLibraryExportEnabled = false;
         IsPlaylistExportPublic = true;
         IsPlaylistExportCleanupEnabled = true;
+        LibraryExportOrder = ExportTrackOrder.ArtistAlbumTrack;
+        PlaylistExportOrder = ExportTrackOrder.SourceOrder;
     }
 
     /// <summary>
@@ -69,6 +71,16 @@ public class UserConfig
         get => _libraryExportDescription;
         set => _libraryExportDescription = (value ?? string.Empty).SanitizeForXml();
     }
+
+    /// <summary>
+    /// Gets or sets the track order of the whole-library ListenBrainz playlist.
+    /// </summary>
+    public ExportTrackOrder LibraryExportOrder { get; set; }
+
+    /// <summary>
+    /// Gets or sets the track order of exported Jellyfin playlists.
+    /// </summary>
+    public ExportTrackOrder PlaylistExportOrder { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether exported ListenBrainz playlists are public.

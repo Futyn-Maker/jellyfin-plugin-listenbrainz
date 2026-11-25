@@ -24,6 +24,8 @@ export const userDefaults: PluginUserConfig = {
     LibraryExportDescription: "",
     IsPlaylistExportPublic: true,
     IsPlaylistExportCleanupEnabled: true,
+    LibraryExportOrder: "ArtistAlbumTrack",
+    PlaylistExportOrder: "SourceOrder",
     UserName: "",
 };
 
