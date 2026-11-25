@@ -99,6 +99,37 @@ public static class PlaylistDiff
     }
 
     /// <summary>
+    /// Count the items of <paramref name="current"/> that <paramref name="desired"/> no longer contains,
+    /// taking duplicates into account. Items that only move are not counted.
+    /// </summary>
+    /// <param name="current">Current list.</param>
+    /// <param name="desired">Desired list.</param>
+    /// <returns>Number of items that would disappear.</returns>
+    public static int CountDropped(IReadOnlyList<string> current, IReadOnlyList<string> desired)
+    {
+        var remaining = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        foreach (var item in desired)
+        {
+            remaining[item] = remaining.GetValueOrDefault(item) + 1;
+        }
+
+        int dropped = 0;
+        foreach (var item in current)
+        {
+            if (remaining.TryGetValue(item, out var count) && count > 0)
+            {
+                remaining[item] = count - 1;
+            }
+            else
+            {
+                dropped++;
+            }
+        }
+
+        return dropped;
+    }
+
+    /// <summary>
     /// Apply an edit script to a list (used for verification and tests).
     /// </summary>
     /// <param name="current">Current list.</param>

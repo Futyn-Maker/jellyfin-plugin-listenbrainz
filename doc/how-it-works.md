@@ -187,5 +187,6 @@ verification.
 Two safety rules protect against transient states, such as a library that is temporarily unavailable:
 
 - A run triggered by library events never removes more than half of a playlist with 20 or more tracks; such
-  a change waits for the next scheduled (or manual) run.
+  a change waits for the next scheduled (or manual) run. Moving tracks is not removing them, so a reordered
+  playlist is updated right away.
 - A deleted Jellyfin playlist is deleted on ListenBrainz only after it has been missing for 15 minutes.

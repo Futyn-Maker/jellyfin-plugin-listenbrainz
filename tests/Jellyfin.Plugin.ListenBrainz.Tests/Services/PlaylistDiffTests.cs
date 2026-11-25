@@ -100,4 +100,23 @@ public class PlaylistDiffTests
         var desired = Enumerable.Range(0, 5_000).Select(i => $"b{i % 2_000}").ToList();
         Assert.Null(PlaylistDiff.Compute(current, desired));
     }
+
+    [Theory]
+    [InlineData("abcdef", "fedcba", 0)]
+    [InlineData("abcdef", "abcdefxyz", 0)]
+    [InlineData("abcdef", "acf", 3)]
+    [InlineData("abcdef", "", 6)]
+    [InlineData("aab", "ab", 1)]
+    [InlineData("aab", "baa", 0)]
+    [InlineData("ab", "aab", 0)]
+    public void CountDropped_CountsOnlyItemsThatDisappear(string current, string desired, int expected)
+    {
+        Assert.Equal(expected, PlaylistDiff.CountDropped(L(current), L(desired)));
+    }
+
+    [Fact]
+    public void CountDropped_IgnoresCase()
+    {
+        Assert.Equal(0, PlaylistDiff.CountDropped(["ABC", "def"], ["def", "abc"]));
+    }
 }
