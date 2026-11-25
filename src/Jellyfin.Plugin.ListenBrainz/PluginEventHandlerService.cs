@@ -3,6 +3,7 @@ using Jellyfin.Plugin.ListenBrainz.Interfaces;
 using MediaBrowser.Controller.Entities.Audio;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Session;
+using MediaBrowser.Model.Plugins;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using JellyfinPlaylist = MediaBrowser.Controller.Playlists.Playlist;
@@ -75,6 +76,10 @@ public sealed class PluginEventHandlerService : IHostedService
         _libraryManager.ItemAdded += OnLibraryItemChanged;
         _libraryManager.ItemUpdated += OnLibraryItemChanged;
         _libraryManager.ItemRemoved += OnLibraryItemChanged;
+        if (Plugin.Instance is not null)
+        {
+            Plugin.Instance.ConfigurationChanged += OnConfigurationChanged;
+        }
 
         _isRegistered = true;
         _logger.LogDebug("Plugin event handlers have been registered");
@@ -97,6 +102,10 @@ public sealed class PluginEventHandlerService : IHostedService
         _libraryManager.ItemAdded -= OnLibraryItemChanged;
         _libraryManager.ItemUpdated -= OnLibraryItemChanged;
         _libraryManager.ItemRemoved -= OnLibraryItemChanged;
+        if (Plugin.Instance is not null)
+        {
+            Plugin.Instance.ConfigurationChanged -= OnConfigurationChanged;
+        }
 
         _isRegistered = false;
         _logger.LogDebug("Plugin event handlers have been unregistered");
@@ -111,5 +120,11 @@ public sealed class PluginEventHandlerService : IHostedService
         {
             _playlistExportService.RequestExport($"{e.Item.GetType().Name} '{e.Item.Name}' changed ({e.UpdateReason})");
         }
+    }
+
+    // Export settings (such as the track order) take effect without waiting for the scheduled task.
+    private void OnConfigurationChanged(object? sender, BasePluginConfiguration e)
+    {
+        _playlistExportService.RequestExport("plugin configuration saved");
     }
 }

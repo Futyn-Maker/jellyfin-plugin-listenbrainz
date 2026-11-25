@@ -170,6 +170,7 @@ picks up the new IDs.
 - Shortly after a change. Adding, removing or reordering playlist items and library changes (new, updated or
   removed tracks) trigger an export 90 seconds after the last change, at most 10 minutes after the first one.
   A library scan therefore causes a single export when it finishes.
+- Shortly after the plugin configuration is saved, so changed export settings apply within two minutes.
 - On server start and every 6 hours, by the `Export playlists to ListenBrainz` task. This run also verifies every
   exported playlist against ListenBrainz and recreates playlists that were deleted there. You can run it manually.
 
